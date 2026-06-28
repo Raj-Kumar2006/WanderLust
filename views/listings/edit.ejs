@@ -1,0 +1,452 @@
+<% layout("/layouts/boilerplate") %>
+
+  <!-- success msg -->
+  <% if (success && success.length) { %>
+    <div class="toast-container">
+      <div class="toast-success" id="successToast">
+        <div class="toast-icon">✓</div>
+        <div class="toast-text">
+          <%= success %>
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+      <!-- error msg -->
+      <% if (error && error.length) { %>
+        <div class="toast-container">
+          <div class="toast-error" id="errorToast">
+            <div class="toast-icon">✖</div>
+            <div class="toast-text">
+              <%= error %>
+            </div>
+          </div>
+        </div>
+        <% } %>
+
+          <div class="container mt-5 mb-5" style="max-width: 780px;">
+
+            <!-- Header -->
+            <div class="text-center mb-4">
+              <h2 class="fw-bold">Edit Your Listing</h2>
+              <p class="text-muted">Update your place details carefully</p>
+            </div>
+
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+
+              <!-- Card Top Bar -->
+              <div class="bg-danger text-white text-center py-3">
+                <h5 class="mb-0">Listing Editor</h5>
+              </div>
+
+              <div class="card-body p-4 p-md-5">
+
+                <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate
+                  class="needs-validation" enctype="multipart/form-data" novalidate>
+
+                  <!-- Title -->
+                  <div class="mb-4">
+                    <label class="form-label fw-semibold">Title</label>
+                    <input name="listing[title]" class="form-control form-control-lg" type="text"
+                      value="<%= listing.title %>" required>
+                    <div class="invalid-feedback">Title is required.</div>
+                    <div class="valid-feedback">Looks good!</div>
+                  </div>
+
+                  <!-- Description -->
+                  <div class="mb-4">
+                    <label class="form-label fw-semibold">Description</label>
+                    <textarea name="listing[description]" class="form-control" rows="5" required
+                      style="resize: none;"><%= listing.description %></textarea>
+                    <div class="invalid-feedback">Description is required.</div>
+                    <div class="valid-feedback">Looks good!</div>
+                  </div>
+
+                  <!-- Image -->
+                  <style>
+                    /* Container styling */
+                    .custom-file-upload {
+                      position: relative;
+                      border: 2px dashed #d1d5db;
+                      border-radius: 12px;
+                      padding: 10px;
+                      text-align: center;
+                      background-color: #f9fafb;
+                      transition: all 0.3s ease;
+                      cursor: pointer;
+                    }
+
+                    .custom-file-upload:hover {
+                      border-color: #db3545;
+                      background-color: #fff3f4;
+                    }
+
+                    /* Hidden real input but covers the area */
+                    .custom-file-upload input[type="file"] {
+                      position: absolute;
+                      top: 0;
+                      left: 0;
+                      width: 100%;
+                      height: 100%;
+                      opacity: 0;
+                      cursor: pointer;
+                    }
+
+                    /* Icon and Text */
+                    .upload-icon {
+                      font-size: 2rem;
+                      color: #6b7280;
+                      margin-bottom: 10px;
+                      display: block;
+                    }
+
+                    .upload-text {
+                      font-weight: 500;
+                      color: #374151;
+                    }
+
+                    .upload-subtext {
+                      font-size: 0.85rem;
+                      color: #9ca3af;
+                    }
+
+                    /* Image styling */
+                    .preview-img {
+                      max-height: 200px;
+                      border-radius: 10px;
+                      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    }
+                  </style>
+                  <div class="mb-4">
+                    <label class="form-label fw-bold mb-2">Listing Image</label>
+
+                    <ul class="nav nav-pills mb-3 bg-light rounded-pill p-1 d-inline-flex" id="imageTabs" role="tablist">
+                      <li class="nav-item" role="presentation">
+                        <button class="nav-link active rounded-pill px-4 fw-bold" id="upload-tab" data-bs-toggle="pill" data-bs-target="#upload" type="button" role="tab" aria-selected="true">Upload New</button>
+                      </li>
+                      <li class="nav-item" role="presentation">
+                        <button class="nav-link rounded-pill px-4 fw-bold text-dark" id="url-tab" data-bs-toggle="pill" data-bs-target="#url" type="button" role="tab" aria-selected="false">New URL</button>
+                      </li>
+                    </ul>
+
+                    <div class="tab-content" id="imageTabsContent">
+                      <div class="tab-pane fade show active" id="upload" role="tabpanel" tabindex="0">
+                        <div class="custom-file-upload" id="dropZone">
+                          <span class="upload-icon" id="uploadIcon">☁️</span>
+                          <div class="upload-text" id="fileName">Click to upload or drag and drop</div>
+                          <div class="upload-subtext">PNG, JPG or JPEG</div>
+                          <input name="listing[image]" type="file" id="fileInput" onchange="updatePreview(this)">
+                        </div>
+                      </div>
+
+                      <div class="tab-pane fade" id="url" role="tabpanel" tabindex="0">
+                        <div class="input-group">
+                          <span class="input-group-text bg-white border-end-0"><i class="bi bi-link-45deg text-muted fs-5"></i></span>
+                          <input type="url" name="listing[imageUrl]" id="urlInput" class="form-control p-3 shadow-none bg-light border-start-0" placeholder="https://example.com/image.jpg" oninput="updatePreviewFromUrl(this)">
+                        </div>
+                        <small class="text-muted mt-2 d-block">Make sure the URL points directly to an image file (e.g. .jpg, .png)</small>
+                      </div>
+                    </div>
+
+                    <div class="mt-4 text-center">
+                      <p class="small text-muted mb-2" id="previewStatus">
+                        <%= listing.image ? "Current Image Preview" : "" %>
+                      </p>
+
+                      <img id="imageDisplay" src="<%= listing.image ? listing.image.url : '' %>"
+                        class="preview-img <%= listing.image ? '' : 'd-none' %>">
+                    </div>
+                  </div>
+
+                  <script>
+                    function updatePreview(input) {
+                      const file = input.files[0];
+                      const preview = document.getElementById('imageDisplay');
+                      const fileNameText = document.getElementById('fileName');
+                      const statusText = document.getElementById('previewStatus');
+                      const icon = document.getElementById('uploadIcon');
+                      const urlInput = document.getElementById('urlInput');
+
+                      if (file) {
+                        if(urlInput) urlInput.value = ''; // clear url input
+
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                          preview.src = e.target.result;
+                          preview.classList.remove('d-none');
+                          fileNameText.innerHTML = `<span class="text-success">Selected: ${file.name}</span>`;
+                          statusText.innerText = "New Selection Preview";
+                          icon.innerText = "📸";
+                        }
+                        reader.readAsDataURL(file);
+                      }
+                    }
+
+                    function updatePreviewFromUrl(input) {
+                      const url = input.value;
+                      const preview = document.getElementById('imageDisplay');
+                      const statusText = document.getElementById('previewStatus');
+                      const fileInput = document.getElementById('fileInput');
+
+                      if (url) {
+                        if(fileInput) fileInput.value = ''; // clear file input
+                        document.getElementById('fileName').innerHTML = `Click to upload or drag and drop`;
+                        document.getElementById('uploadIcon').innerText = "☁️";
+
+                        preview.src = url;
+                        preview.classList.remove('d-none');
+                        statusText.innerText = "New URL Preview";
+                      }
+                    }
+
+                    document.querySelectorAll('#imageTabs .nav-link').forEach(tab => {
+                      tab.addEventListener('click', function() {
+                        document.querySelectorAll('#imageTabs .nav-link').forEach(t => t.classList.add('text-dark'));
+                        this.classList.remove('text-dark');
+                      });
+                    });
+                  </script>
+
+                  <!-- Price -->
+                  <div class="mb-4">
+                    <label class="form-label fw-semibold">Price</label>
+                    <div class="input-group has-validation">
+                      <span class="input-group-text">₹</span>
+                      <input name="listing[price]" class="form-control" type="number" min="1"
+                        value="<%= listing.price %>" required>
+                      <div class="invalid-feedback">
+                        Price must be greater than 0.
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Country -->
+                  <div class="mb-4">
+                    <label class="form-label fw-semibold">Country</label>
+                    <input name="listing[country]" class="form-control" type="text" value="<%= listing.country %>"
+                      required>
+                    <div class="invalid-feedback">Country is required.</div>
+                    <div class="valid-feedback">Looks good!</div>
+                  </div>
+
+                  <!-- Location -->
+                  <div class="mb-4">
+                    <label class="form-label fw-semibold">Location</label>
+                    <div class="input-group">
+                      <input name="listing[location]" id="locationInput" class="form-control" type="text" value="<%= listing.location %>" required oninput="clearCoordinates()" placeholder="Enter address and click search">
+                      <button type="button" class="btn btn-dark fw-bold px-3" id="searchLocationBtn" onclick="forwardGeocode()" title="Search location on map">
+                        Search
+                      </button>
+                      <button type="button" class="btn btn-outline-danger" onclick="getCurrentLocation()" title="Use my current location">
+                        <i class="bi bi-crosshair"></i> 📍
+                      </button>
+                      <div class="invalid-feedback">Location is required.</div>
+                      <div class="valid-feedback">Looks good!</div>
+                    </div>
+                    <small class="text-muted">Search address to auto-pin on map, or click crosshair for current location</small>
+                  </div>
+
+                  <!-- Hidden lat/lng fields for auto-tracking -->
+                  <input type="hidden" name="listing[lat]" id="latInput" value="<%= listing.lat || '' %>">
+                  <input type="hidden" name="listing[lng]" id="lngInput" value="<%= listing.lng || '' %>">
+
+                  <!-- Mini Map for location selection -->
+                  <div class="mb-4">
+                    <label class="form-label fw-semibold">Pin Location on Map</label>
+                    <div id="editMap" style="height:300px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.1);"></div>
+                    <small class="text-muted">Click on the map to update location</small>
+                  </div>
+
+                  <script>
+                    // Airbnb-style marker icon
+                    const airbnbMarkerIcon = L.divIcon({
+                      className: 'airbnb-marker',
+                      html: `<div class="marker-pin"><svg viewBox="0 0 24 24" fill="#ff385c" width="32" height="32"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg></div>`,
+                      iconSize: [32, 42],
+                      iconAnchor: [16, 42],
+                      popupAnchor: [0, -42]
+                    });
+                    
+                    // Initialize map for edit listing
+                    <% if (listing.lat && listing.lng) { %>
+                    var lat = <%= listing.lat %>;
+                    var lng = <%= listing.lng %>;
+                    var editMap = L.map('editMap', {
+                      zoomControl: false,
+                      scrollWheelZoom: false
+                    }).setView([lat, lng], 15);
+                    <% } else { %>
+                    var lat = 28.6139;
+                    var lng = 77.2090;
+                    var editMap = L.map('editMap', {
+                      zoomControl: false,
+                      scrollWheelZoom: false
+                    }).setView([lat, lng], 10);
+                    <% } %>
+                    
+                    // OpenStreetMap standard tiles
+                    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                      attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                      maxZoom:19
+                    }).addTo(editMap);
+                    
+                    var marker = null;
+                    
+                    // If existing location, show marker
+                    if (lat && lng) {
+                      marker = L.marker([lat, lng], { icon: airbnbMarkerIcon }).addTo(editMap)
+                        .bindPopup("<div class='popup-content'><svg viewBox='0 0 24 24' fill='#ff385c' width='16' height='16' style='margin-right:4px;'><path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z'/></svg><span>Current Location</span></div>", {
+                          className: 'airbnb-popup-container',
+                          closeButton: false
+                        }).openPopup();
+                    }
+                    
+                    // Click on map to set location
+                    editMap.on('click', function(e) {
+                      if (marker) {
+                        editMap.removeLayer(marker);
+                      }
+                      marker = L.marker(e.latlng, { icon: airbnbMarkerIcon }).addTo(editMap)
+                        .bindPopup("<div class='popup-content'><svg viewBox='0 0 24 24' fill='#ff385c' width='16' height='16' style='margin-right:4px;'><path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z'/></svg><span>Selected Location</span></div>", {
+                          className: 'airbnb-popup-container',
+                          closeButton: false
+                        }).openPopup();
+                      
+                      // Fill hidden fields
+                      document.getElementById('latInput').value = e.latlng.lat.toFixed(6);
+                      document.getElementById('lngInput').value = e.latlng.lng.toFixed(6);
+                      
+                      // Reverse geocode to get location string
+                      reverseGeocode(e.latlng.lat, e.latlng.lng);
+                    });
+                    
+                    // Get current location
+                    function getCurrentLocation() {
+                      if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(function(position) {
+                          var currentLat = position.coords.latitude;
+                          var currentLng = position.coords.longitude;
+                          
+                          // Center map and add marker
+                          editMap.setView([currentLat, currentLng], 15);
+                          if (marker) {
+                            editMap.removeLayer(marker);
+                          }
+                          marker = L.marker([currentLat, currentLng], { icon: airbnbMarkerIcon }).addTo(editMap)
+                            .bindPopup("<div class='popup-content'><svg viewBox='0 0 24 24' fill='#ff385c' width='16' height='16' style='margin-right:4px;'><path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z'/></svg><span>Your Location</span></div>", {
+                              className: 'airbnb-popup-container',
+                              closeButton: false
+                            }).openPopup();
+                          
+                          // Fill hidden fields
+                          document.getElementById('latInput').value = currentLat.toFixed(6);
+                          document.getElementById('lngInput').value = currentLng.toFixed(6);
+                          
+                          // Reverse geocode
+                          reverseGeocode(currentLat, currentLng);
+                        }, function(error) {
+                          alert('Unable to get location: ' + error.message);
+                        });
+                      } else {
+                        alert('Geolocation is not supported by your browser');
+                      }
+                    }
+                    
+                    // Reverse geocode to get address
+                    function reverseGeocode(lat, lng) {
+                      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                        .then(response => response.json())
+                        .then(data => {
+                          if (data.display_name) {
+                            document.getElementById('locationInput').value = data.display_name;
+                          }
+                        })
+                        .catch(error => {
+                          console.log('Reverse geocoding failed:', error);
+                        });
+                    }
+
+                    // Clear coordinates if user manually types location
+                    function clearCoordinates() {
+                      document.getElementById('latInput').value = '';
+                      document.getElementById('lngInput').value = '';
+                    }
+
+                    // Forward geocode to find location by name
+                    function forwardGeocode() {
+                      const address = document.getElementById('locationInput').value;
+                      if(!address) return;
+                      
+                      const btn = document.getElementById('searchLocationBtn');
+                      const originalText = btn.innerText;
+                      btn.innerText = '...';
+                      
+                      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                          btn.innerText = originalText;
+                          if (data && data.length > 0) {
+                            const lat = parseFloat(data[0].lat);
+                            const lng = parseFloat(data[0].lon);
+                            
+                            editMap.setView([lat, lng], 15);
+                            if (marker) {
+                              editMap.removeLayer(marker);
+                            }
+                            marker = L.marker([lat, lng], { icon: airbnbMarkerIcon }).addTo(editMap)
+                              .bindPopup("<div class='popup-content'><svg viewBox='0 0 24 24' fill='#ff385c' width='16' height='16' style='margin-right:4px;'><path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z'/></svg><span>Searched Location</span></div>", {
+                                className: 'airbnb-popup-container',
+                                closeButton: false
+                              }).openPopup();
+                              
+                            document.getElementById('latInput').value = lat.toFixed(6);
+                            document.getElementById('lngInput').value = lng.toFixed(6);
+                          } else {
+                            alert('Location not found! Try being more specific.');
+                          }
+                        })
+                        .catch(error => {
+                          btn.innerText = originalText;
+                          console.log('Forward geocoding failed:', error);
+                        });
+                    }
+                  </script>
+
+                  <!-- Buttons -->
+                  <div class="d-flex gap-3 mt-4">
+                    <button class="btn btn-danger btn-lg w-100 shadow-sm">
+                      Save Changes
+                    </button>
+                    <a href="/listings/<%= listing._id %>" class="btn btn-outline-secondary btn-lg w-100">
+                      Cancel
+                    </a>
+                  </div>
+
+                </form>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= Bootstrap Validation Script ================= -->
+          <script>
+            (() => {
+              'use strict'
+              const forms = document.querySelectorAll('.needs-validation')
+
+              Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                  if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                  }
+                  form.classList.add('was-validated')
+                }, false)
+              })
+            })()
+
+            setTimeout(() => {
+              const flash = document.querySelector(".flash");
+              if (flash) flash.remove();
+            }, 5000);
+          </script>

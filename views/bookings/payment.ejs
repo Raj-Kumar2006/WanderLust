@@ -1,0 +1,204 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5 mb-5" style="max-width: 900px;">
+  <div class="row g-5">
+    
+    <!-- Left Column: Payment Form -->
+    <div class="col-md-7">
+      <h2 class="fw-bold mb-4">Confirm and pay</h2>
+      
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-semibold m-0">Pay with</h4>
+        <div class="d-flex gap-2">
+          <i class="fa-brands fa-cc-visa fs-3 text-primary"></i>
+          <i class="fa-brands fa-cc-mastercard fs-3 text-warning"></i>
+          <i class="fa-brands fa-cc-amex fs-3 text-info"></i>
+        </div>
+      </div>
+
+      <form action="/listings/<%= listing._id %>/bookings" method="POST">
+        <!-- Hidden fields to carry over the booking data -->
+        <input type="hidden" name="checkIn" value="<%= checkIn %>">
+        <input type="hidden" name="checkOut" value="<%= checkOut %>">
+        <input type="hidden" name="guests" value="<%= guests %>">
+        <input type="hidden" name="totalPrice" value="<%= totalPrice %>">
+
+        <div class="border rounded-4 overflow-hidden mb-4 bg-white shadow-sm">
+          <p class="text-muted small m-0 p-3 bg-light border-bottom"><i class="fa-solid fa-lock text-success me-1"></i> This is a secure demo payment system. No real money will be charged.</p>
+          
+          <!-- Payment Method Tabs -->
+          <ul class="nav nav-tabs nav-fill border-bottom-0 bg-light" id="paymentTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active fw-bold text-dark border-0 border-bottom border-dark border-2 rounded-0 py-3" id="card-tab" data-bs-toggle="tab" data-bs-target="#card" type="button" role="tab" aria-selected="true"><i class="fa-regular fa-credit-card me-2"></i>Card</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link fw-bold text-muted border-0 rounded-0 py-3" id="upi-tab" data-bs-toggle="tab" data-bs-target="#upi" type="button" role="tab" aria-selected="false"><i class="fa-solid fa-qrcode me-2"></i>UPI</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link fw-bold text-muted border-0 rounded-0 py-3" id="bank-tab" data-bs-toggle="tab" data-bs-target="#bank" type="button" role="tab" aria-selected="false"><i class="fa-solid fa-building-columns me-2"></i>Net Banking</button>
+            </li>
+          </ul>
+
+          <div class="tab-content p-4" id="paymentTabsContent">
+            <!-- Card Tab -->
+            <div class="tab-pane fade show active" id="card" role="tabpanel" tabindex="0">
+              <div class="mb-3">
+                <label class="form-label fw-bold">Card number</label>
+                <input type="text" id="cardNumberInput" class="form-control p-3 shadow-none bg-light" placeholder="0000 0000 0000 0000" maxlength="19" required>
+              </div>
+              <div class="row">
+                <div class="col-6 mb-3">
+                  <label class="form-label fw-bold">Expiration</label>
+                  <input type="text" id="cardExpiryInput" class="form-control p-3 shadow-none bg-light" placeholder="MM/YY" maxlength="5" required>
+                </div>
+                <div class="col-6 mb-3">
+                  <label class="form-label fw-bold">CVV</label>
+                  <input type="text" id="cardCvvInput" class="form-control p-3 shadow-none bg-light" placeholder="123" maxlength="4" required>
+                </div>
+              </div>
+              <div class="mb-2">
+                <label class="form-label fw-bold">Name on card</label>
+                <input type="text" class="form-control p-3 shadow-none bg-light" placeholder="John Doe" required>
+              </div>
+            </div>
+
+            <!-- UPI Tab -->
+            <div class="tab-pane fade" id="upi" role="tabpanel" tabindex="0">
+              <div class="text-center mb-4 mt-2">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI" height="40" class="mb-3">
+                <div class="mb-3">
+                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=demomerchant@upi&pn=WanderLust" alt="UPI QR Code" class="img-fluid border p-2 rounded shadow-sm bg-white" style="max-width: 150px;">
+                </div>
+                <p class="text-muted small mb-1">Scan QR code to pay using any UPI app</p>
+                <p class="text-muted small fw-bold">OR</p>
+              </div>
+              <div class="mb-2">
+                <label class="form-label fw-bold">Enter your UPI ID</label>
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control p-3 shadow-none bg-light" placeholder="username@upi">
+                  <button class="btn btn-outline-dark fw-bold px-4" type="button" onclick="alert('UPI ID Verified!')">Verify</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Net Banking Tab -->
+            <div class="tab-pane fade" id="bank" role="tabpanel" tabindex="0">
+              <div class="mb-3 mt-2">
+                <label class="form-label fw-bold">Select your Bank</label>
+                <select class="form-select p-3 shadow-none bg-light">
+                  <option selected disabled>Choose from popular banks</option>
+                  <option value="sbi">State Bank of India (SBI)</option>
+                  <option value="hdfc">HDFC Bank</option>
+                  <option value="icici">ICICI Bank</option>
+                  <option value="axis">Axis Bank</option>
+                  <option value="kotak">Kotak Mahindra Bank</option>
+                  <option value="pnb">Punjab National Bank (PNB)</option>
+                </select>
+              </div>
+              <p class="text-muted small mt-3 mb-2"><i class="fa-solid fa-circle-info"></i> You will be redirected to your bank's secure page to complete the payment.</p>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-4">
+
+        <h4 class="fw-semibold mb-3">Cancellation policy</h4>
+        <p class="text-muted"><span class="fw-bold text-dark">Free cancellation for 48 hours.</span> After that, cancel before check-in and get a 50% refund, minus the service fee.</p>
+        
+        <hr class="my-4">
+
+        <p class="text-muted small mb-4">By selecting the button below, I agree to the House Rules, Ground Rules for Guests, Airbnb's Rebooking and Refund Policy, and that Airbnb can charge my payment method if I'm responsible for damage.</p>
+
+        <button type="submit" class="btn btn-danger fw-bold py-3 px-5 rounded-3 text-white fs-5 w-100" style="background: linear-gradient(to right, #E61E4D 0%, #E31C5F 50%, #D70466 100%); border: none; box-shadow: 0 4px 15px rgba(227, 28, 95, 0.3); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">Confirm and pay</button>
+      </form>
+      
+      <script>
+        // Custom script to handle tab active states
+        document.querySelectorAll('.nav-tabs .nav-link').forEach(tab => {
+          tab.addEventListener('click', function() {
+            // Reset all
+            document.querySelectorAll('.nav-tabs .nav-link').forEach(t => {
+              t.classList.remove('active', 'text-dark', 'border-bottom', 'border-dark', 'border-2');
+              t.classList.add('text-muted');
+            });
+            // Set active
+            this.classList.remove('text-muted');
+            this.classList.add('active', 'text-dark', 'border-bottom', 'border-dark', 'border-2');
+            
+            // Remove required attribute from card inputs if card tab isn't active
+            const cardInputs = document.querySelectorAll('#card input');
+            if (this.id !== 'card-tab') {
+              cardInputs.forEach(i => i.removeAttribute('required'));
+            } else {
+              cardInputs.forEach(i => i.setAttribute('required', 'required'));
+            }
+          });
+        });
+
+        // Input Formatting
+        const cardNumberInput = document.getElementById('cardNumberInput');
+        if (cardNumberInput) {
+          cardNumberInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+            let formattedValue = '';
+            for (let i = 0; i < value.length; i++) {
+              if (i > 0 && i % 4 === 0) formattedValue += ' ';
+              formattedValue += value[i];
+            }
+            e.target.value = formattedValue;
+          });
+        }
+
+        const cardExpiryInput = document.getElementById('cardExpiryInput');
+        if (cardExpiryInput) {
+          cardExpiryInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+            if (value.length >= 3) {
+              value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+          });
+        }
+        
+        const cardCvvInput = document.getElementById('cardCvvInput');
+        if (cardCvvInput) {
+          cardCvvInput.addEventListener('input', function (e) {
+             e.target.value = e.target.value.replace(/\D/g, '');
+          });
+        }
+      </script>
+    </div>
+
+    <!-- Right Column: Booking Summary -->
+    <div class="col-md-5">
+      <div class="card shadow-lg border-0 rounded-4 p-4 sticky-top" style="top: 100px;">
+        <div class="d-flex gap-3 mb-4 pb-4 border-bottom">
+          <img src="<%= listing.image.url %>" class="rounded-3 shadow-sm" style="width: 120px; height: 100px; object-fit: cover;" alt="Listing Image">
+          <div>
+            <p class="text-muted small mb-1"><%= listing.location %>, <%= listing.country %></p>
+            <h5 class="fw-bold mb-1"><%= listing.title %></h5>
+            <p class="small m-0"><i class="fa-solid fa-star small"></i> 4.90 (120 reviews)</p>
+          </div>
+        </div>
+
+        <h4 class="fw-bold mb-4">Price details</h4>
+        
+        <div class="d-flex justify-content-between mb-3 text-muted">
+          <span>₹<%= listing.price.toLocaleString("en-IN") %> x <%= Math.ceil(Math.abs(new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24)) %> nights</span>
+          <span>₹<%= Number(totalPrice).toLocaleString("en-IN") %></span>
+        </div>
+        
+        <div class="d-flex justify-content-between mb-4 pb-4 border-bottom text-muted">
+          <span>Airbnb service fee</span>
+          <span>₹0</span>
+        </div>
+
+        <div class="d-flex justify-content-between fw-bold fs-5">
+          <span>Total (INR)</span>
+          <span>₹<%= Number(totalPrice).toLocaleString("en-IN") %></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

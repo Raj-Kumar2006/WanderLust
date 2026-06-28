@@ -1,0 +1,79 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5 mb-5">
+  <div class="row">
+    <!-- Host Sidebar Menu -->
+    <div class="col-md-3 mb-4">
+      <div class="list-group border-0 shadow-sm rounded-4">
+        <a href="/host" class="list-group-item list-group-item-action py-3 fw-bold border-0 rounded-top-4">
+          <i class="fa-solid fa-chart-pie me-2 text-muted"></i> Overview
+        </a>
+        <a href="/host/listings" class="list-group-item list-group-item-action py-3 fw-bold border-0">
+          <i class="fa-solid fa-house me-2 text-muted"></i> My Listings
+        </a>
+        <a href="/host/bookings" class="list-group-item list-group-item-action py-3 active fw-bold border-0 bg-dark text-white">
+          <i class="fa-solid fa-calendar-check me-2"></i> Bookings
+        </a>
+        <a href="/host/reviews" class="list-group-item list-group-item-action py-3 fw-bold border-0 rounded-bottom-4">
+          <i class="fa-solid fa-star me-2 text-muted"></i> Reviews
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-9">
+      <h2 class="fw-bold mb-4"><%= bookings.length %> Bookings</h2>
+
+      <% if (bookings.length === 0) { %>
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-light">
+          <i class="fa-regular fa-calendar-xmark fs-1 text-muted mb-3"></i>
+          <h5 class="fw-bold">No bookings yet</h5>
+          <p class="text-muted mb-0">When guests book your properties, they will show up here.</p>
+        </div>
+      <% } else { %>
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col" class="py-3 px-4">Guest</th>
+                  <th scope="col" class="py-3">Property</th>
+                  <th scope="col" class="py-3">Dates</th>
+                  <th scope="col" class="py-3">Guests</th>
+                  <th scope="col" class="py-3 text-end px-4">Earnings</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% for (let booking of bookings) { %>
+                  <tr>
+                    <td class="px-4 py-3 fw-bold">
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                          <%= booking.user.username.charAt(0).toUpperCase() %>
+                        </div>
+                        <%= booking.user.username %>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="/listings/<%= booking.listing._id %>" class="text-dark fw-bold text-decoration-none hover-underline"><%= booking.listing.title %></a>
+                    </td>
+                    <td class="text-muted small">
+                      <%= booking.checkIn.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) %> - 
+                      <%= booking.checkOut.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) %>
+                    </td>
+                    <td class="text-muted"><%= booking.guests %></td>
+                    <td class="fw-bold text-success text-end px-4">₹<%= booking.totalPrice.toLocaleString("en-IN") %></td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% } %>
+
+    </div>
+  </div>
+</div>
+<style>
+  .hover-underline:hover { text-decoration: underline !important; }
+</style>

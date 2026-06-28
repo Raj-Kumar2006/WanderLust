@@ -1,0 +1,117 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5 mb-5">
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <h2 class="fw-bold m-0">❤️ My Wishlist</h2>
+    <span class="badge bg-dark rounded-pill fs-6 px-3"><%= wishlist.length %></span>
+  </div>
+
+  <% if (wishlist.length === 0) { %>
+    <div class="text-center py-5">
+      <div class="wishlist-empty-icon mb-4">
+        <i class="fa-regular fa-heart"></i>
+      </div>
+      <h4 class="fw-bold">Your wishlist is empty</h4>
+      <p class="text-muted">Save properties you love by clicking the ❤️ heart icon on any listing.</p>
+      <a href="/listings" class="btn btn-danger fw-bold rounded-pill px-4 py-2 mt-2">Explore Listings</a>
+    </div>
+  <% } else { %>
+    <div class="row row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4">
+      <% for (let listing of wishlist) { %>
+        <div class="col">
+          <div class="wishlist-card">
+            <!-- Remove button -->
+            <button
+              class="wishlist-heart-btn wishlisted"
+              data-id="<%= listing._id %>"
+              title="Remove from wishlist"
+            >
+              <i class="fa-solid fa-heart"></i>
+            </button>
+
+            <a href="/listings/<%= listing._id %>" class="text-decoration-none text-dark">
+              <img src="<%= listing.image.url %>" alt="<%= listing.title %>" class="wishlist-img">
+              <div class="p-2">
+                <h6 class="fw-semibold mb-1 text-truncate"><%= listing.title %></h6>
+                <p class="text-muted small mb-1"><i class="fa-solid fa-location-dot me-1"></i><%= listing.location %></p>
+                <p class="fw-bold mb-0">₹ <%= listing.price ? listing.price.toLocaleString("en-IN") : "" %> <span class="fw-normal text-muted">/ night</span></p>
+              </div>
+            </a>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
+</div>
+
+<style>
+  .wishlist-empty-icon {
+    font-size: 4rem;
+    color: #f43f5e;
+    animation: pulse 1.5s ease infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+  .wishlist-card {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    background: white;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .wishlist-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.13);
+  }
+  .wishlist-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  .wishlist-heart-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255,255,255,0.85);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    font-size: 16px;
+    transition: transform 0.2s ease;
+    color: #f43f5e;
+    backdrop-filter: blur(4px);
+  }
+  .wishlist-heart-btn:hover {
+    transform: scale(1.2);
+  }
+</style>
+
+<script>
+  document.querySelectorAll(".wishlist-heart-btn").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const listingId = btn.dataset.id;
+      const res = await fetch(`/wishlist/toggle/${listingId}`, { method: "POST" });
+      const data = await res.json();
+      if (!data.wishlisted) {
+        // Remove card from UI
+        btn.closest(".col").remove();
+        // Update count badge
+        const badge = document.querySelector(".badge.bg-dark");
+        if (badge) {
+          const cnt = parseInt(badge.textContent) - 1;
+          badge.textContent = cnt;
+        }
+      }
+    });
+  });
+</script>

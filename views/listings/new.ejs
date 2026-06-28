@@ -1,0 +1,389 @@
+<% layout("/layouts/boilerplate") %>
+
+  <div class="container mt-5 mb-5" style="max-width: 780px;">
+
+    <div class="text-center mb-4">
+      <h2 class="fw-bold">Create New Listing</h2>
+      <p class="text-muted">Add your place details and publish it</p>
+    </div>
+
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+
+      <div class="bg-danger text-white text-center py-3">
+        <h5 class="mb-0">New Listing Form</h5>
+      </div>
+
+      <div class="card-body p-4 p-md-5">
+
+        <form action="/listings" method="POST" class="needs-validation" novalidate enctype="multipart/form-data">
+
+          <!-- Title -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Title</label>
+            <input name="listing[title]" class="form-control form-control-lg" type="text" placeholder="Enter title"
+              required>
+            <div class="invalid-feedback">Title is required.</div>
+          </div>
+
+          <!-- Description -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Description</label>
+            <textarea name="listing[description]" class="form-control" rows="5" placeholder="Write something..."
+              style="resize:none;" required></textarea>
+            <div class="invalid-feedback">Description is required.</div>
+          </div>
+
+          <!-- Image -->
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+          <style>
+            .upload-card {
+              width: 100%;
+              height: 100px;
+              border: 2px dashed #ddd;
+              border-radius: 14px;
+              background: #fafafa;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              transition: all 0.25s ease;
+            }
+
+            .upload-card:hover {
+              border-color: #dc3545;
+              background: #fff5f6;
+            }
+
+            .upload-input {
+              display: none;
+            }
+
+            .upload-content {
+              text-align: center;
+            }
+
+            .upload-icon {
+              font-size: 28px;
+              color: #dc3545;
+              display: block;
+              margin-bottom: 4px;
+            }
+
+            .upload-text {
+              font-size: 0.95rem;
+              font-weight: 500;
+              color: #444;
+            }
+
+            .file-name {
+              font-size: 0.85rem;
+              color: #666;
+              margin-top: 4px;
+            }
+          </style>
+          <div class="mb-4">
+            <label class="form-label fw-semibold mb-2">Image</label>
+            
+            <ul class="nav nav-pills mb-3 bg-light rounded-pill p-1 d-inline-flex" id="imageTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active rounded-pill px-4 fw-bold" id="upload-tab" data-bs-toggle="pill" data-bs-target="#upload" type="button" role="tab" aria-selected="true">Upload File</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-pill px-4 fw-bold text-dark" id="url-tab" data-bs-toggle="pill" data-bs-target="#url" type="button" role="tab" aria-selected="false">Paste URL</button>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="imageTabsContent">
+              <div class="tab-pane fade show active" id="upload" role="tabpanel" tabindex="0">
+                <label class="upload-card">
+                  <input type="file" name="listing[image]" id="fileInput" class="upload-input" onchange="showFileName(this)">
+                  <div class="upload-content">
+                    <i class="bi bi-cloud-arrow-up upload-icon"></i>
+                    <div class="upload-text">Choose a file to upload</div>
+                    <div class="file-name mt-1 text-muted small"></div>
+                  </div>
+                </label>
+              </div>
+              
+              <div class="tab-pane fade" id="url" role="tabpanel" tabindex="0">
+                <div class="input-group">
+                  <span class="input-group-text bg-white border-end-0"><i class="bi bi-link-45deg text-muted fs-5"></i></span>
+                  <input type="url" name="listing[imageUrl]" id="urlInput" class="form-control p-3 shadow-none bg-light border-start-0" placeholder="https://example.com/image.jpg">
+                </div>
+                <small class="text-muted mt-2 d-block">Make sure the URL points directly to an image file (e.g. .jpg, .png)</small>
+              </div>
+            </div>
+            
+            <script>
+              const form = document.querySelector('form.needs-validation');
+              const fileInput = document.getElementById('fileInput');
+              const urlInput = document.getElementById('urlInput');
+              
+              form.addEventListener('submit', function(e) {
+                if (!fileInput.value && !urlInput.value) {
+                  e.preventDefault();
+                  alert("Please either upload an image or provide an image URL.");
+                }
+              });
+              
+              document.querySelectorAll('#imageTabs .nav-link').forEach(tab => {
+                tab.addEventListener('click', function() {
+                  document.querySelectorAll('#imageTabs .nav-link').forEach(t => t.classList.add('text-dark'));
+                  this.classList.remove('text-dark');
+                  
+                  // Clear the other input when switching tabs to avoid confusion
+                  if (this.id === 'upload-tab') {
+                    urlInput.value = '';
+                  } else {
+                    fileInput.value = '';
+                    showFileName(fileInput);
+                  }
+                });
+              });
+            </script>
+          </div>
+          <script>
+            function showFileName(input) {
+              const fileName = input.files[0]?.name || "";
+              const container = input.closest(".upload-card");
+              if (container) {
+                container.querySelector(".file-name").textContent = fileName;
+              }
+            }
+          </script>
+
+
+
+
+
+
+
+
+          <!-- Price -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Price</label>
+
+            <div class="input-group has-validation">
+              <span class="input-group-text">₹</span>
+
+              <input name="listing[price]" class="form-control" type="number" min="1" required
+                placeholder="Enter price">
+
+              <div class="invalid-feedback">
+                Price is required and must be greater than 0.
+              </div>
+            </div>
+          </div>
+
+          <!-- Category -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Category</label>
+            <select name="listing[category]" class="form-select form-select-lg shadow-none">
+              <option value="Trending" selected>🔥 Trending (Default)</option>
+              <option value="Mountains">⛰️ Mountains</option>
+              <option value="Beach">🏖️ Beach</option>
+              <option value="Nature">🌿 Nature</option>
+              <option value="City">🏙️ City</option>
+              <option value="Arctic">❄️ Arctic</option>
+              <option value="Camping">⛺ Camping</option>
+              <option value="Historic">🏛️ Historic</option>
+              <option value="Rooms">🏠 Rooms</option>
+              <option value="Hotels">🏨 Hotels</option>
+              <option value="Beachfront">🌊 Beachfront</option>
+              <option value="Pool">🏊 Pool</option>
+              <option value="Spa">💆 Spa</option>
+              <option value="Countryside">🌾 Countryside</option>
+              <option value="Apartments">🏢 Apartments</option>
+              <option value="Igloos">🏔️ Igloos</option>
+              <option value="Modern">🛋️ Modern</option>
+              <option value="Castles">🏰 Castles</option>
+              <option value="Villas">🏡 Villas</option>
+              <option value="Glamping">🏕️ Glamping</option>
+              <option value="Lakefront">🚣 Lakefront</option>
+              <option value="Boats">⛵ Boats</option>
+              <option value="Luxury">🍷 Luxury</option>
+              <option value="Skiing">⛷️ Skiing</option>
+            </select>
+            <small class="text-muted">Your listing will always appear in <strong>Trending</strong> + the category you choose.</small>
+          </div>
+
+          <!-- Country -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Country</label>
+            <input name="listing[country]" class="form-control" type="text" required>
+            <div class="invalid-feedback">Country is required.</div>
+          </div>
+
+          <!-- Location -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Location</label>
+            <div class="input-group">
+              <input name="listing[location]" id="locationInput" class="form-control" type="text" required oninput="clearCoordinates()" placeholder="Enter address and click search">
+              <button type="button" class="btn btn-dark fw-bold px-3" id="searchLocationBtn" onclick="forwardGeocode()" title="Search location on map">
+                Search
+              </button>
+              <button type="button" class="btn btn-outline-danger" onclick="getCurrentLocation()" title="Use my current location">
+                <i class="bi bi-crosshair"></i> 📍
+              </button>
+              <div class="invalid-feedback">Location is required.</div>
+            </div>
+            <small class="text-muted">Search address to auto-pin on map, or click crosshair for current location</small>
+          </div>
+
+          <!-- Hidden lat/lng fields for auto-tracking -->
+          <input type="hidden" name="listing[lat]" id="latInput" value="">
+          <input type="hidden" name="listing[lng]" id="lngInput" value="">
+
+          <!-- Mini Map for location selection -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Pin Location on Map</label>
+            <div id="newMap" style="height:300px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.1);"></div>
+            <small class="text-muted">Click on the map to set exact location</small>
+          </div>
+
+          <script>
+            // Airbnb-style marker icon
+            const airbnbMarkerIcon = L.divIcon({
+              className: 'airbnb-marker',
+              html: `<div class="marker-pin"><svg viewBox="0 0 24 24" fill="#ff385c" width="32" height="32"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg></div>`,
+              iconSize: [32, 42],
+              iconAnchor: [16, 42],
+              popupAnchor: [0, -42]
+            });
+            
+            // Initialize map for new listing
+            var newMap = L.map('newMap', {
+              zoomControl: false,
+              scrollWheelZoom: false
+            }).setView([28.6139, 77.2090], 10);
+            
+            // OpenStreetMap standard tiles
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+              maxZoom:19
+            }).addTo(newMap);
+            
+            var marker = null;
+            
+            // Click on map to set location
+            newMap.on('click', function(e) {
+              if (marker) {
+                newMap.removeLayer(marker);
+              }
+              marker = L.marker(e.latlng, { icon: airbnbMarkerIcon }).addTo(newMap)
+                .bindPopup("<div class='popup-content'><svg viewBox='0 0 24 24' fill='#ff385c' width='16' height='16' style='margin-right:4px;'><path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z'/></svg><span>Selected Location</span></div>", {
+                  className: 'airbnb-popup-container',
+                  closeButton: false
+                }).openPopup();
+              
+              // Fill hidden fields
+              document.getElementById('latInput').value = e.latlng.lat.toFixed(6);
+              document.getElementById('lngInput').value = e.latlng.lng.toFixed(6);
+              
+              // Reverse geocode to get location string
+              reverseGeocode(e.latlng.lat, e.latlng.lng);
+            });
+            
+            // Get current location
+            function getCurrentLocation() {
+              if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                  var lat = position.coords.latitude;
+                  var lng = position.coords.longitude;
+                  
+                  // Center map and add marker
+                  newMap.setView([lat, lng], 15);
+                  if (marker) {
+                    newMap.removeLayer(marker);
+                  }
+                  marker = L.marker([lat, lng], { icon: airbnbMarkerIcon }).addTo(newMap)
+                    .bindPopup("<div class='popup-content'><svg viewBox='0 0 24 24' fill='#ff385c' width='16' height='16' style='margin-right:4px;'><path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z'/></svg><span>Your Location</span></div>", {
+                      className: 'airbnb-popup-container',
+                      closeButton: false
+                    }).openPopup();
+                  
+                  // Fill hidden fields
+                  document.getElementById('latInput').value = lat.toFixed(6);
+                  document.getElementById('lngInput').value = lng.toFixed(6);
+                  
+                  // Reverse geocode
+                  reverseGeocode(lat, lng);
+                }, function(error) {
+                  alert('Unable to get location: ' + error.message);
+                });
+              } else {
+                alert('Geolocation is not supported by your browser');
+              }
+            }
+            
+            // Reverse geocode to get address
+            function reverseGeocode(lat, lng) {
+              fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(response => response.json())
+                .then(data => {
+                  if (data.display_name) {
+                    document.getElementById('locationInput').value = data.display_name;
+                  }
+                })
+                .catch(error => {
+                  console.log('Reverse geocoding failed:', error);
+                });
+            }
+
+            // Clear coordinates if user manually types location
+            function clearCoordinates() {
+              document.getElementById('latInput').value = '';
+              document.getElementById('lngInput').value = '';
+            }
+
+            // Forward geocode to find location by name
+            function forwardGeocode() {
+              const address = document.getElementById('locationInput').value;
+              if(!address) return;
+              
+              const btn = document.getElementById('searchLocationBtn');
+              const originalText = btn.innerText;
+              btn.innerText = '...';
+              
+              fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
+                .then(response => response.json())
+                .then(data => {
+                  btn.innerText = originalText;
+                  if (data && data.length > 0) {
+                    const lat = parseFloat(data[0].lat);
+                    const lng = parseFloat(data[0].lon);
+                    
+                    newMap.setView([lat, lng], 15);
+                    if (marker) {
+                      newMap.removeLayer(marker);
+                    }
+                    marker = L.marker([lat, lng], { icon: airbnbMarkerIcon }).addTo(newMap)
+                      .bindPopup("<div class='popup-content'><svg viewBox='0 0 24 24' fill='#ff385c' width='16' height='16' style='margin-right:4px;'><path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z'/></svg><span>Searched Location</span></div>", {
+                        className: 'airbnb-popup-container',
+                        closeButton: false
+                      }).openPopup();
+                      
+                    document.getElementById('latInput').value = lat.toFixed(6);
+                    document.getElementById('lngInput').value = lng.toFixed(6);
+                  } else {
+                    alert('Location not found! Try being more specific.');
+                  }
+                })
+                .catch(error => {
+                  btn.innerText = originalText;
+                  console.log('Forward geocoding failed:', error);
+                });
+            }
+          </script>
+
+          <div class="d-flex gap-3 mt-4">
+            <button type="submit" class="btn btn-danger btn-lg w-100">Create Listing</button>
+            <a href="/listings" class="btn btn-outline-secondary btn-lg w-100">Cancel</a>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>

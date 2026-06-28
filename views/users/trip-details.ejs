@@ -1,0 +1,59 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5 mb-5" style="max-width: 800px;">
+  
+  <div class="d-flex align-items-center mb-4">
+    <a href="/trips" class="text-dark text-decoration-none fs-4 me-3"><i class="fa-solid fa-chevron-left"></i></a>
+    <h2 class="fw-bold m-0">Your Reservation</h2>
+  </div>
+
+  <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+    <div class="row g-0">
+      <div class="col-md-5">
+        <img src="<%= booking.listing.image.url %>" class="img-fluid h-100" style="object-fit: cover;" alt="Listing image">
+      </div>
+      <div class="col-md-7">
+        <div class="card-body p-4">
+          <p class="text-muted small mb-1"><%= booking.listing.location %>, <%= booking.listing.country %></p>
+          <h4 class="fw-bold mb-3"><%= booking.listing.title %></h4>
+          
+          <hr>
+          
+          <div class="row text-center mb-3">
+            <div class="col-6 border-end">
+              <p class="text-muted small fw-bold text-uppercase mb-1">Check-in</p>
+              <p class="fw-semibold m-0"><%= booking.checkIn.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }) %></p>
+            </div>
+            <div class="col-6">
+              <p class="text-muted small fw-bold text-uppercase mb-1">Checkout</p>
+              <p class="fw-semibold m-0"><%= booking.checkOut.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }) %></p>
+            </div>
+          </div>
+          
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted fw-semibold">Guests</span>
+            <span class="fw-bold"><%= booking.guests %></span>
+          </div>
+          
+          <div class="d-flex justify-content-between pt-3 border-top mt-3">
+            <span class="fw-bold fs-5">Total Paid</span>
+            <span class="fw-bold fs-5 text-danger">₹<%= booking.totalPrice.toLocaleString("en-IN") %></span>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center bg-light p-4 rounded-4">
+    <div>
+      <h5 class="fw-bold mb-1">Need to change your plans?</h5>
+      <p class="text-muted small m-0">Cancel before check-in for a full refund minus service fees.</p>
+    </div>
+    
+    <form action="/bookings/<%= booking._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to cancel this booking? This action cannot be undone.');">
+      <button type="submit" class="btn btn-outline-danger fw-bold py-2 px-4 rounded-pill">Cancel Booking</button>
+    </form>
+  </div>
+
+</div>

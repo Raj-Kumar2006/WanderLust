@@ -1,0 +1,371 @@
+<% layout("/layouts/boilerplate") %>
+
+  <div class="container mt-4 mb-5">
+
+
+
+<style>
+
+/* ================= SEARCH BAR ================= */
+
+/* ================= SEARCH BAR ================= */
+
+/* 🔥 GLASS STICKY NAVBAR */
+
+
+
+.nav-center{ display:flex; justify-content:center; }
+
+/* SEARCH BOX */
+
+.search-box{
+  display:flex;
+  align-items:center;
+  background:#fff;
+  border-radius:50px;
+  padding:0px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.12);
+  transition:0.3s;
+}
+
+/* SEARCH ITEM */
+
+.search-item{
+  padding:10px 20px;
+  display:flex;
+  flex-direction:column;
+  border-radius:40px;
+  transition:0.25s;
+}
+
+/* 🔥 AIRBNB HOVER EFFECT */
+
+.search-item:hover{
+  background:#ebebeb;
+  cursor:pointer;
+}
+
+.search-item label{
+  font-size:12px;
+  font-weight:600;
+}
+
+.search-item input{
+  border:none;
+  outline:none;
+  background:transparent;
+  font-size:14px;
+  cursor:text;
+}
+
+/* DIVIDER */
+
+.divider{
+  width:1px;
+  height:30px;
+  background:#ddd;
+}
+
+/* SEARCH BUTTON */
+
+.search-btn{
+  background:#ff385c;
+  border:none;
+  color:white;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  cursor:pointer;
+  transition:0.2s;
+  margin-right:10px;
+  margin-left:10px;
+}
+
+.search-btn:hover{
+  transform:scale(1.05);
+}
+
+.search-btn span {
+  display: none;
+}
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media(max-width:768px){
+
+  .search-box{
+    flex-wrap:wrap;
+    border-radius:20px;
+    gap:10px;
+    width:90%;
+  }
+
+  .divider{
+    display:none;
+  }
+
+  .search-item{
+    width:100%;
+  }
+
+  .search-item label{
+    display:none;
+  }
+
+  .search-btn{
+    width:100%;
+    border-radius:12px;
+    height:40px;
+    margin-bottom: 10px;
+  }
+
+  .search-btn span {
+  display: inline-block;
+  font-size: 18px;
+  font-weight: 500;
+}
+}
+
+
+
+
+/* ================= FILTER CONTAINER ================= */
+
+#filters{
+  display:flex;
+  gap:20px;
+  overflow:auto;
+  margin:20px 0;
+  padding:8px 5px;
+  scrollbar-width:none;
+}
+
+#filters::-webkit-scrollbar{
+  display:none;
+}
+
+
+/* ================= FILTER ITEM ================= */
+
+.filter{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  cursor:pointer;
+  opacity:0.6;
+  min-width:80px;
+  padding-bottom:6px;
+  transition:all 0.3s ease;
+  border-bottom:2px solid transparent;
+  position:relative;
+}
+
+.filter i{
+  font-size:20px;
+  margin-bottom:4px;
+  transition:0.3s;
+}
+
+/* HOVER */
+
+.filter:hover{
+  opacity:1;
+  transform:translateY(-3px);
+}
+
+/* 🔥 ACTIVE FILTER */
+
+.filter.active{
+  opacity:1;
+  font-weight:600;
+}
+
+/* Smooth Airbnb underline */
+
+.filter.active::after{
+  content:"";
+  position:absolute;
+  bottom:0;
+  left:15%;
+  width:70%;
+  height:2px;
+  background:#000;
+  border-radius:2px;
+  animation:underlineSlide 0.25s ease;
+}
+
+/* animation */
+
+@keyframes underlineSlide{
+  from{
+    width:0;
+    left:50%;
+  }
+  to{
+    width:70%;
+    left:15%;
+  }
+}
+
+
+</style>
+
+<!-- ================= FILTERS ================= -->
+
+<div id="filters">
+
+  <a href="/listings?category=Trending" class="text-dark text-decoration-none"><div class="filter <%= category === 'Trending' ? 'active' : '' %>"><i class="fa-solid fa-fire"></i><div>Trending</div></div></a>
+  <a href="/listings?category=Mountains" class="text-dark text-decoration-none"><div class="filter <%= category === 'Mountains' ? 'active' : '' %>"><i class="fa-solid fa-mountain-sun"></i><div>Mountains</div></div></a>
+  <a href="/listings?category=Beach" class="text-dark text-decoration-none"><div class="filter <%= category === 'Beach' ? 'active' : '' %>"><i class="fa-solid fa-water"></i><div>Beach</div></div></a>
+  <a href="/listings?category=Nature" class="text-dark text-decoration-none"><div class="filter <%= category === 'Nature' ? 'active' : '' %>"><i class="fa-solid fa-tree"></i><div>Nature</div></div></a>
+  <a href="/listings?category=City" class="text-dark text-decoration-none"><div class="filter <%= category === 'City' ? 'active' : '' %>"><i class="fa-solid fa-city"></i><div>City</div></div></a>
+  <a href="/listings?category=Arctic" class="text-dark text-decoration-none"><div class="filter <%= category === 'Arctic' ? 'active' : '' %>"><i class="fa-solid fa-snowflake"></i><div>Arctic</div></div></a>
+  <a href="/listings?category=Camping" class="text-dark text-decoration-none"><div class="filter <%= category === 'Camping' ? 'active' : '' %>"><i class="fa-solid fa-campground"></i><div>Camping</div></div></a>
+  <a href="/listings?category=Historic" class="text-dark text-decoration-none"><div class="filter <%= category === 'Historic' ? 'active' : '' %>"><i class="fa-solid fa-landmark"></i><div>Historic</div></div></a>
+  <a href="/listings?category=Rooms" class="text-dark text-decoration-none"><div class="filter <%= category === 'Rooms' ? 'active' : '' %>"><i class="fa-solid fa-house"></i><div>Rooms</div></div></a>
+  <a href="/listings?category=Hotels" class="text-dark text-decoration-none"><div class="filter <%= category === 'Hotels' ? 'active' : '' %>"><i class="fa-solid fa-hotel"></i><div>Hotels</div></div></a>
+  <a href="/listings?category=Beachfront" class="text-dark text-decoration-none"><div class="filter <%= category === 'Beachfront' ? 'active' : '' %>"><i class="fa-solid fa-umbrella-beach"></i><div>Beachfront</div></div></a>
+  <a href="/listings?category=Pool" class="text-dark text-decoration-none"><div class="filter <%= category === 'Pool' ? 'active' : '' %>"><i class="fa-solid fa-person-swimming"></i><div>Pool</div></div></a>
+  <a href="/listings?category=Spa" class="text-dark text-decoration-none"><div class="filter <%= category === 'Spa' ? 'active' : '' %>"><i class="fa-solid fa-spa"></i><div>Spa</div></div></a>
+  <a href="/listings?category=Countryside" class="text-dark text-decoration-none"><div class="filter <%= category === 'Countryside' ? 'active' : '' %>"><i class="fa-solid fa-tree-city"></i><div>Countryside</div></div></a>
+  <a href="/listings?category=Apartments" class="text-dark text-decoration-none"><div class="filter <%= category === 'Apartments' ? 'active' : '' %>"><i class="fa-solid fa-building"></i><div>Apartments</div></div></a>
+  <a href="/listings?category=Igloos" class="text-dark text-decoration-none"><div class="filter <%= category === 'Igloos' ? 'active' : '' %>"><i class="fa-solid fa-igloo"></i><div>Igloos</div></div></a>
+  <a href="/listings?category=Modern" class="text-dark text-decoration-none"><div class="filter <%= category === 'Modern' ? 'active' : '' %>"><i class="fa-solid fa-couch"></i><div>Modern</div></div></a>
+  <a href="/listings?category=Castles" class="text-dark text-decoration-none"><div class="filter <%= category === 'Castles' ? 'active' : '' %>"><i class="fa-solid fa-archway"></i><div>Castles</div></div></a>
+  <a href="/listings?category=Villas" class="text-dark text-decoration-none"><div class="filter <%= category === 'Villas' ? 'active' : '' %>"><i class="fa-solid fa-house-chimney"></i><div>Villas</div></div></a>
+  <a href="/listings?category=Glamping" class="text-dark text-decoration-none"><div class="filter <%= category === 'Glamping' ? 'active' : '' %>"><i class="fa-solid fa-tent"></i><div>Glamping</div></div></a>
+  <a href="/listings?category=Lakefront" class="text-dark text-decoration-none"><div class="filter <%= category === 'Lakefront' ? 'active' : '' %>"><i class="fa-solid fa-water-ladder"></i><div>Lakefront</div></div></a>
+  <a href="/listings?category=Boats" class="text-dark text-decoration-none"><div class="filter <%= category === 'Boats' ? 'active' : '' %>"><i class="fa-solid fa-ship"></i><div>Boats</div></div></a>
+  <a href="/listings?category=Luxury" class="text-dark text-decoration-none"><div class="filter <%= category === 'Luxury' ? 'active' : '' %>"><i class="fa-solid fa-wine-glass"></i><div>Luxury</div></div></a>
+  <a href="/listings?category=Skiing" class="text-dark text-decoration-none"><div class="filter <%= category === 'Skiing' ? 'active' : '' %>"><i class="fa-solid fa-skiing"></i><div>Skiing</div></div></a>
+
+</div>
+
+
+
+
+    <!-- Listings Grid -->
+    <% if(allListings.length === 0) { %>
+      <div class="text-center py-5">
+        <i class="fa-solid fa-magnifying-glass fs-1 text-muted mb-3 d-block"></i>
+        <h4 class="fw-bold mt-3">No results found</h4>
+        <% if(typeof searchQuery !== 'undefined' && searchQuery) { %>
+          <p class="text-muted fs-6">No listings match "<strong><%= searchQuery %></strong>". Try a different search or explore categories above.</p>
+        <% } else { %>
+          <p class="text-muted fs-6">No listings available in this category right now.</p>
+        <% } %>
+        <a href="/listings" class="btn btn-outline-dark fw-bold rounded-pill py-2 px-4 mt-2">View all listings</a>
+      </div>
+    <% } else { %>
+    <div class="row row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4">
+
+      <% for(let listing of allListings) { %>
+        <div class="col">
+          <!-- Card wrapper is relative for heart button -->
+          <div style="position:relative;">
+
+            <!-- ❤️ Wishlist Heart Button -->
+            <% if (currentUser) { %>
+              <button
+                class="wishlist-heart-btn <%= wishlistIds && wishlistIds.includes(listing._id.toString()) ? 'wishlisted' : '' %>"
+                data-id="<%= listing._id %>"
+                title="Save to Wishlist"
+                onclick="event.stopPropagation(); event.preventDefault(); toggleWishlist(this);"
+              >
+                <i class="fa-<%= wishlistIds && wishlistIds.includes(listing._id.toString()) ? 'solid' : 'regular' %> fa-heart"></i>
+              </button>
+            <% } %>
+
+            <a href="/listings/<%= listing._id %>" class="text-decoration-none text-dark">
+
+              <!-- Card -->
+              <div class="card listing-card shadow-sm border-0 rounded-1 overflow-hidden">
+
+                <!-- Image -->
+                <img src="<%= listing.image.url %>" class="card-img-top" alt="listing-image">
+
+                <!-- Body -->
+                <div class="card-body py-2 px-2">
+
+                  <h6 class="fw-semibold mb-1 text-truncate">
+                    <%= listing.title %>
+                  </h6>
+
+                  <p class="mb-0 fw-bold">
+                    ₹ <%= listing.price ? listing.price.toLocaleString("en-IN") : "" %>
+                      <span class="fw-normal text-muted">/ night</span>
+                  </p>
+
+                </div>
+
+              </div>
+
+            </a>
+          </div>
+        </div>
+        <% } %>
+
+    </div>
+    <% } %>
+
+  </div>
+
+  <!-- ✅ Custom CSS -->
+  <style>
+    .listing-card img {
+      height: 180px;
+      object-fit: cover;
+    }
+    .listing-card {
+      transition: all 0.2s ease;
+    }
+    .listing-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+    /* ❤️ Heart Button */
+    .wishlist-heart-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255,255,255,0.85);
+      border: none;
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      font-size: 15px;
+      color: #aaa;
+      transition: transform 0.2s ease, color 0.2s ease;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 1px 6px rgba(0,0,0,0.15);
+    }
+    .wishlist-heart-btn:hover {
+      transform: scale(1.2);
+      color: #f43f5e;
+    }
+    .wishlist-heart-btn.wishlisted {
+      color: #f43f5e;
+    }
+    .wishlist-heart-btn.wishlisted i { font-weight: 900; }
+  </style>
+
+  <script>
+    async function toggleWishlist(btn) {
+      const listingId = btn.dataset.id;
+      const res = await fetch(`/wishlist/toggle/${listingId}`, { method: "POST" });
+      const data = await res.json();
+      const icon = btn.querySelector("i");
+      if (data.wishlisted) {
+        btn.classList.add("wishlisted");
+        icon.className = "fa-solid fa-heart";
+      } else {
+        btn.classList.remove("wishlisted");
+        icon.className = "fa-regular fa-heart";
+      }
+    }
+  </script>

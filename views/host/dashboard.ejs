@@ -1,0 +1,224 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5 mb-5">
+  <div class="row">
+    <!-- Host Sidebar Menu -->
+    <div class="col-md-3 mb-4">
+      <div class="list-group border-0 shadow-sm rounded-4">
+        <a href="/host" class="list-group-item list-group-item-action py-3 active fw-bold border-0 bg-dark text-white rounded-top-4">
+          <i class="fa-solid fa-chart-pie me-2"></i> Overview
+        </a>
+        <a href="/host/listings" class="list-group-item list-group-item-action py-3 fw-bold border-0">
+          <i class="fa-solid fa-house me-2"></i> My Listings
+        </a>
+        <a href="/host/bookings" class="list-group-item list-group-item-action py-3 fw-bold border-0">
+          <i class="fa-solid fa-calendar-check me-2"></i> Bookings
+        </a>
+        <a href="/host/reviews" class="list-group-item list-group-item-action py-3 fw-bold border-0 rounded-bottom-4">
+          <i class="fa-solid fa-star me-2 text-muted"></i> Reviews
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-9">
+      <h2 class="fw-bold mb-1">Welcome back, <%= currentUser.username %>! 👋</h2>
+      <p class="text-muted mb-4">Here's your hosting overview at a glance.</p>
+
+      <!-- ───── Stats Grid ───── -->
+      <div class="row g-3 mb-4">
+
+        <!-- 1. Total Earnings -->
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg,#22c55e,#16a34a);">
+              <i class="fa-solid fa-indian-rupee-sign"></i>
+            </div>
+            <div class="stat-label">Total Earnings</div>
+            <div class="stat-value text-success">₹<%= totalRevenue.toLocaleString("en-IN") %></div>
+          </div>
+        </div>
+
+        <!-- 2. Upcoming Bookings -->
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg,#3b82f6,#2563eb);">
+              <i class="fa-solid fa-calendar-days"></i>
+            </div>
+            <div class="stat-label">Upcoming Bookings</div>
+            <div class="stat-value text-primary"><%= upcomingBookingsCount %></div>
+          </div>
+        </div>
+
+        <!-- 3. Active Listings -->
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg,#f97316,#ea580c);">
+              <i class="fa-solid fa-house-chimney"></i>
+            </div>
+            <div class="stat-label">Active Listings</div>
+            <div class="stat-value" style="color:#ea580c;"><%= listingsCount %></div>
+          </div>
+        </div>
+
+        <!-- 4. Average Rating -->
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg,#f59e0b,#d97706);">
+              <i class="fa-solid fa-star"></i>
+            </div>
+            <div class="stat-label">Avg Rating</div>
+            <div class="stat-value text-warning">
+              <% if (avgRating) { %><%= avgRating %>/5<% } else { %>—<% } %>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Occupancy Rate -->
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg,#8b5cf6,#7c3aed);">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <div class="stat-label">Occupancy Rate</div>
+            <div class="stat-value" style="color:#7c3aed;"><%= occupancyRate %>%</div>
+            <div class="occupancy-bar mt-2">
+              <div class="occupancy-fill" style="width: <%= occupancyRate %>%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Pending Payouts -->
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg,#06b6d4,#0891b2);">
+              <i class="fa-solid fa-wallet"></i>
+            </div>
+            <div class="stat-label">Pending Payouts</div>
+            <div class="stat-value" style="color:#0891b2;">₹<%= pendingPayouts.toLocaleString("en-IN") %></div>
+          </div>
+        </div>
+
+        <!-- 7. Cancelled Bookings -->
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg,#ef4444,#dc2626);">
+              <i class="fa-solid fa-xmark"></i>
+            </div>
+            <div class="stat-label">Cancelled</div>
+            <div class="stat-value text-danger"><%= cancelledCount %></div>
+          </div>
+        </div>
+
+        <!-- 8. Wishlist Saves -->
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg,#f43f5e,#e11d48);">
+              <i class="fa-solid fa-heart"></i>
+            </div>
+            <div class="stat-label">Wishlist Saves</div>
+            <div class="stat-value" style="color:#e11d48;"><%= wishlistSaves %></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ───── Upcoming Bookings Preview ───── -->
+      <% if (upcomingBookings && upcomingBookings.length > 0) { %>
+      <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold m-0"><i class="fa-solid fa-calendar-days me-2 text-primary"></i>Upcoming Bookings</h5>
+          <a href="/host/bookings" class="btn btn-sm btn-outline-dark rounded-pill px-3">View All</a>
+        </div>
+        <div class="d-flex flex-column gap-2">
+          <% for (let booking of upcomingBookings) { %>
+            <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-3">
+              <img src="<%= booking.listing.image.url %>" alt="" class="rounded-3" style="width:54px;height:40px;object-fit:cover;">
+              <div class="flex-grow-1">
+                <div class="fw-bold text-truncate" style="max-width:200px;"><%= booking.listing.title %></div>
+                <div class="text-muted small">
+                  <i class="fa-solid fa-user me-1"></i><%= booking.user.username %> ·
+                  <%= booking.checkIn.toLocaleDateString('en-IN', { month:'short', day:'numeric' }) %> →
+                  <%= booking.checkOut.toLocaleDateString('en-IN', { month:'short', day:'numeric' }) %>
+                </div>
+              </div>
+              <div class="fw-bold text-success">₹<%= booking.totalPrice.toLocaleString("en-IN") %></div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+      <% } %>
+
+      <!-- ───── Quick Actions ───── -->
+      <% if (listingsCount === 0) { %>
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-light">
+          <i class="fa-solid fa-house-chimney-window fs-1 text-muted mb-3"></i>
+          <h4 class="fw-bold">You don't have any listings yet</h4>
+          <p class="text-muted">Start earning money by hosting your home on WanderLust.</p>
+          <a href="/listings/new" class="btn btn-danger fw-bold rounded-pill px-4 py-2 mt-2">Create your first listing</a>
+        </div>
+      <% } else { %>
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+          <h5 class="fw-bold mb-3">Quick Actions</h5>
+          <div class="d-flex gap-3 flex-wrap">
+            <a href="/listings/new" class="btn btn-dark fw-bold rounded-pill px-4 py-2"><i class="fa-solid fa-plus me-2"></i>Add Listing</a>
+            <a href="/host/bookings" class="btn btn-outline-dark fw-bold rounded-pill px-4 py-2">View Bookings</a>
+            <a href="/host/reviews" class="btn btn-outline-warning fw-bold rounded-pill px-4 py-2"><i class="fa-solid fa-star me-1"></i>Reviews</a>
+          </div>
+        </div>
+      <% } %>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .stat-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+  }
+  .stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  .stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6b7280;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .stat-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+  .occupancy-bar {
+    height: 5px;
+    background: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .occupancy-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+    border-radius: 10px;
+    transition: width 1s ease;
+  }
+</style>

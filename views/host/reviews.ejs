@@ -1,0 +1,150 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5 mb-5">
+  <div class="row">
+    <!-- Host Sidebar Menu -->
+    <div class="col-md-3 mb-4">
+      <div class="list-group border-0 shadow-sm rounded-4">
+        <a href="/host" class="list-group-item list-group-item-action py-3 fw-bold border-0 rounded-top-4">
+          <i class="fa-solid fa-chart-pie me-2 text-muted"></i> Overview
+        </a>
+        <a href="/host/listings" class="list-group-item list-group-item-action py-3 fw-bold border-0">
+          <i class="fa-solid fa-house me-2 text-muted"></i> My Listings
+        </a>
+        <a href="/host/bookings" class="list-group-item list-group-item-action py-3 fw-bold border-0">
+          <i class="fa-solid fa-calendar-check me-2 text-muted"></i> Bookings
+        </a>
+        <a href="/host/reviews" class="list-group-item list-group-item-action py-3 active fw-bold border-0 bg-dark text-white rounded-bottom-4">
+          <i class="fa-solid fa-star me-2"></i> Reviews
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-9">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <h2 class="fw-bold m-0"><%= allReviews.length %> Guest Reviews</h2>
+        <% if (allReviews.length > 0) {
+          const avg = (allReviews.reduce((sum, r) => sum + r.review.rating, 0) / allReviews.length).toFixed(1);
+        %>
+          <span class="badge bg-warning text-dark fs-6 rounded-pill px-3">
+            <i class="fa-solid fa-star me-1"></i><%= avg %> avg
+          </span>
+        <% } %>
+      </div>
+
+      <% if (allReviews.length === 0) { %>
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-light">
+          <i class="fa-regular fa-star fs-1 text-muted mb-3"></i>
+          <h5 class="fw-bold">No reviews yet</h5>
+          <p class="text-muted mb-0">When guests leave reviews on your listings, they will appear here.</p>
+        </div>
+      <% } else { %>
+
+        <!-- Rating Distribution Summary -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+          <h6 class="fw-bold text-uppercase text-muted mb-3">Rating Breakdown</h6>
+          <div class="row g-2">
+            <% for (let star = 5; star >= 1; star--) {
+              const count = allReviews.filter(r => Math.round(r.review.rating) === star).length;
+              const pct = allReviews.length > 0 ? Math.round((count / allReviews.length) * 100) : 0;
+            %>
+              <div class="col-12">
+                <div class="d-flex align-items-center gap-3">
+                  <span class="text-muted small fw-bold" style="width: 20px;"><%= star %></span>
+                  <i class="fa-solid fa-star text-warning small"></i>
+                  <div class="flex-grow-1 bg-light rounded-pill" style="height: 8px;">
+                    <div class="bg-warning rounded-pill" style="height: 8px; width: <%= pct %>%;"></div>
+                  </div>
+                  <span class="text-muted small" style="width: 30px;"><%= count %></span>
+                </div>
+              </div>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Reviews List -->
+        <div class="d-flex flex-column gap-3">
+          <% for (let { review, listing } of allReviews) { %>
+            <div class="card border-0 shadow-sm rounded-4 p-4 review-card">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <!-- Reviewer Info -->
+                <div class="d-flex align-items-center gap-3">
+                  <div class="reviewer-avatar">
+                    <%= review.name.charAt(0).toUpperCase() %>
+                  </div>
+                  <div>
+                    <div class="fw-bold"><%= review.name %></div>
+                    <div class="text-muted small">
+                      <i class="fa-regular fa-clock me-1"></i>
+                      <%= review.createdAt.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                    </div>
+                  </div>
+                </div>
+                <!-- Rating Stars -->
+                <div class="d-flex align-items-center gap-1">
+                  <% for (let i = 1; i <= 5; i++) { %>
+                    <i class="fa-<%= i <= review.rating ? 'solid' : 'regular' %> fa-star text-warning"></i>
+                  <% } %>
+                  <span class="fw-bold ms-1"><%= review.rating %>/5</span>
+                </div>
+              </div>
+
+              <!-- Comment -->
+              <p class="mb-3 review-comment">"<%= review.comment %>"</p>
+
+              <!-- Listing Reference -->
+              <div class="listing-pill">
+                <i class="fa-solid fa-house me-2 text-muted"></i>
+                <a href="/listings/<%= listing._id %>" class="text-dark fw-bold text-decoration-none hover-underline">
+                  <%= listing.title %>
+                </a>
+                <span class="text-muted ms-2 small">— <%= listing.location %></span>
+              </div>
+            </div>
+          <% } %>
+        </div>
+
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<style>
+  .review-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .review-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1) !important;
+  }
+  .reviewer-avatar {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .review-comment {
+    color: #444;
+    line-height: 1.7;
+    font-size: 0.97rem;
+    border-left: 3px solid #ffc107;
+    padding-left: 14px;
+  }
+  .listing-pill {
+    background: #f8f9fa;
+    border-radius: 50px;
+    padding: 8px 16px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.875rem;
+  }
+  .hover-underline:hover { text-decoration: underline !important; }
+</style>

@@ -1,0 +1,92 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5 mb-5">
+  <div class="row">
+    <!-- Host Sidebar Menu -->
+    <div class="col-md-3 mb-4">
+      <div class="list-group border-0 shadow-sm rounded-4">
+        <a href="/host" class="list-group-item list-group-item-action py-3 fw-bold border-0 rounded-top-4">
+          <i class="fa-solid fa-chart-pie me-2 text-muted"></i> Overview
+        </a>
+        <a href="/host/listings" class="list-group-item list-group-item-action py-3 active fw-bold border-0 bg-dark text-white">
+          <i class="fa-solid fa-house me-2"></i> My Listings
+        </a>
+        <a href="/host/bookings" class="list-group-item list-group-item-action py-3 fw-bold border-0">
+          <i class="fa-solid fa-calendar-check me-2 text-muted"></i> Bookings
+        </a>
+        <a href="/host/reviews" class="list-group-item list-group-item-action py-3 fw-bold border-0 rounded-bottom-4">
+          <i class="fa-solid fa-star me-2 text-muted"></i> Reviews
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-9">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold m-0"><%= listings.length %> Listings</h2>
+        <a href="/listings/new" class="btn btn-dark fw-bold rounded-pill px-4"><i class="fa-solid fa-plus me-2"></i>Create</a>
+      </div>
+
+      <% if (listings.length === 0) { %>
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-light">
+          <i class="fa-solid fa-house fs-1 text-muted mb-3"></i>
+          <h5 class="fw-bold">No listings found</h5>
+          <p class="text-muted mb-0">You haven't added any properties yet.</p>
+        </div>
+      <% } else { %>
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col" class="py-3 px-4">Listing</th>
+                  <th scope="col" class="py-3">Location</th>
+                  <th scope="col" class="py-3">Price / night</th>
+                  <th scope="col" class="py-3">Reviews</th>
+                  <th scope="col" class="py-3 text-end px-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% for (let listing of listings) { %>
+                  <tr>
+                    <td class="px-4 py-3">
+                      <div class="d-flex align-items-center gap-3">
+                        <img src="<%= listing.image.url %>" alt="Listing image" class="rounded-3 shadow-sm" style="width: 60px; height: 45px; object-fit: cover;">
+                        <a href="/listings/<%= listing._id %>" class="text-dark fw-bold text-decoration-none hover-underline"><%= listing.title %></a>
+                      </div>
+                    </td>
+                    <td class="text-muted"><%= listing.location %></td>
+                    <td class="fw-bold">₹<%= listing.price.toLocaleString("en-IN") %></td>
+                    <td>
+                      <% const revCount = listing.reviews ? listing.reviews.length : 0;
+                         const avgRating = revCount > 0 ? (listing.reviews.reduce((s, r) => s + r.rating, 0) / revCount).toFixed(1) : null; %>
+                      <% if (revCount > 0) { %>
+                        <span class="d-flex align-items-center gap-1">
+                          <i class="fa-solid fa-star text-warning small"></i>
+                          <span class="fw-bold"><%= avgRating %></span>
+                          <span class="text-muted small">(<%= revCount %>)</span>
+                        </span>
+                      <% } else { %>
+                        <span class="text-muted small">No reviews</span>
+                      <% } %>
+                    </td>
+                    <td class="text-end px-4">
+                      <a href="/listings/<%= listing._id %>/edit" class="btn btn-sm btn-outline-dark fw-bold rounded-pill px-3 me-2">Edit</a>
+                      <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this listing?');">
+                        <button type="submit" class="btn btn-sm btn-outline-danger fw-bold rounded-pill px-3">Delete</button>
+                      </form>
+                    </td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% } %>
+
+    </div>
+  </div>
+</div>
+<style>
+  .hover-underline:hover { text-decoration: underline !important; }
+</style>

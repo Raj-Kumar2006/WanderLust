@@ -1,0 +1,122 @@
+<nav class="navbar bg-white border-bottom sticky-top shadow-sm py-2">
+  <div class="container-fluid px-3 px-lg-5 d-flex align-items-center gap-2 gap-md-3">
+
+    <!-- Logo (Left) -->
+    <a class="navbar-brand fw-bold d-flex align-items-center gap-2 text-danger fs-4 m-0 me-2" href="/listings">
+      <i class="fa-brands fa-airbnb"></i>
+      <span class="d-none d-lg-inline text-danger fs-5">WanderLust</span>
+    </a>
+
+    <!-- Search Bar (Desktop) -->
+    <div class="d-none d-md-flex align-items-center justify-content-center flex-grow-1">
+      <form action="/listings" method="GET"
+        class="search-bar-advanced d-flex align-items-center border rounded-pill shadow-sm bg-white"
+        style="height: 48px; transition: box-shadow 0.2s; cursor: pointer; max-width: 500px;">
+
+        <input type="text" name="location" class="form-control border-0 bg-transparent shadow-none fw-semibold ps-4"
+          placeholder="Anywhere" style="font-size: 14px; outline: none; width: 130px;" onfocus="this.placeholder=''"
+          onblur="this.placeholder='Anywhere'">
+
+        <div class="vr" style="height: 24px; opacity: 0.15;"></div>
+
+        <div class="fw-semibold px-3 text-dark d-flex align-items-center" style="font-size: 14px; height: 100%;">Any
+          week</div>
+
+        <div class="vr" style="height: 24px; opacity: 0.15;"></div>
+
+        <div class="d-flex align-items-center ps-3 pe-2">
+          <div class="text-muted pe-3" style="font-size: 14px;">Add guests</div>
+          <button type="submit"
+            class="btn btn-danger rounded-circle d-flex align-items-center justify-content-center p-0"
+            style="width: 32px; height: 32px; transition: transform 0.2s;">
+            <i class="fa-solid fa-magnifying-glass text-white" style="font-size: 13px;"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Search Bar (Mobile) -->
+    <div class="d-flex d-md-none align-items-center flex-grow-1">
+      <form action="/listings" method="GET"
+        class="d-flex align-items-center border rounded-pill shadow-sm bg-white w-100 px-3" style="height: 40px;">
+        <i class="fa-solid fa-magnifying-glass text-muted me-2" style="font-size: 13px;"></i>
+        <input type="text" name="location" class="form-control border-0 bg-transparent shadow-none p-0"
+          placeholder="Where to?" style="font-size: 13px; outline: none;">
+      </form>
+    </div>
+
+    <!-- Right Section: Desktop links + User Icon (always visible) -->
+    <div class="d-flex align-items-center gap-2 ms-2">
+      <!-- Desktop only links -->
+      <a class="nav-link fw-semibold text-dark hover-bg px-3 py-2 rounded-pill d-none d-md-block" href="/listings/new"
+        style="font-size: 14px; border: 1px solid black; white-space: nowrap;">Airbnb your home</a>
+
+      <!-- <a href="#"
+        class="text-dark hover-bg p-2 rounded-circle d-none d-md-flex align-items-center justify-content-center">
+        <i class="fa-solid fa-globe fs-5"></i>
+      </a> -->
+
+      <!-- User Menu -->
+      <% if(currentUser) { %>
+      <div class="dropdown">
+        <button
+          class="btn border rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center p-0"
+          type="button" data-bs-toggle="dropdown" aria-expanded="false"
+          style="width: 40px; height: 40px; min-width: 40px; transition: box-shadow 0.2s; flex-shrink: 0;">
+          <div class="d-flex align-items-center justify-content-center bg-dark text-white rounded-circle"
+            style="width: 100%; height: 100%;">
+            <% if(currentUser && currentUser.username){ %>
+              <span class="fw-bold" style="font-size: 15px;">
+                <%= currentUser.username.charAt(0).toUpperCase() %>
+              </span>
+              <% } else { %>
+                <i class="fa-solid fa-user" style="font-size: 15px;"></i>
+                <% } %>
+          </div>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 py-2"
+          style="width: 240px; border-radius: 12px;">
+          <li><a class="dropdown-item fw-bold py-2" href="/messages">Messages</a></li>
+          <li><a class="dropdown-item fw-bold py-2" href="/trips">Trips</a></li>
+          <li><a class="dropdown-item fw-bold py-2" href="/wishlist"><i class="fa-solid fa-heart text-danger me-1"></i>Wishlist</a></li>
+          <li><a class="dropdown-item fw-bold py-2 text-primary" href="/host">Host Dashboard</a></li>
+          <li>
+            <hr class="dropdown-divider my-1">
+          </li>
+          <li><a class="dropdown-item py-2" href="/profile">Account</a></li>
+          <li>
+            <hr class="dropdown-divider my-1">
+          </li>
+          <li><a class="dropdown-item py-2 text-danger" href="/logout">Log out</a></li>
+        </ul>
+      </div>
+      <% } else { %>
+        <div class="d-flex align-items-center gap-2">
+          <a href="/login" class="nav-link fw-semibold text-dark hover-bg px-3 py-2 rounded-pill d-none d-sm-block" style="font-size: 14px;">Log in</a>
+          <a href="/signup" class="btn btn-danger fw-bold rounded-pill px-4 py-2 text-white shadow-sm" style="font-size: 14px; transition: transform 0.2s;">Sign up</a>
+        </div>
+      <% } %>
+    </div>
+
+  </div>
+</nav>
+
+<style>
+  .search-bar-advanced:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .hover-bg:hover {
+    background-color: #f7f7f7;
+  }
+
+  .dropdown-menu .dropdown-item {
+    font-size: 14px;
+    transition: background-color 0.2s;
+  }
+
+  .dropdown-menu .dropdown-item:hover {
+    background-color: #f7f7f7;
+  }
+</style>

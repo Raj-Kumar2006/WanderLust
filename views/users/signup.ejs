@@ -1,0 +1,86 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container min-vh-100 d-flex align-items-center justify-content-center">
+  <div class="col-12 col-sm-10 col-md-6 col-lg-4">
+    <div class="card shadow-lg rounded-3">
+      <div class="card-body p-5">
+
+        <h3 class="text-center text-danger fw-bold mb-4">Create Account</h3>
+
+        <form class="needs-validation" novalidate action="/signup" method="POST">
+          
+          <!-- Username -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Username</label>
+            <input type="text" name="username" class="form-control form-control-lg" placeholder="Enter username" required>
+            <div class="invalid-feedback">
+              Username is required
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Email</label>
+            <input type="email" name="email" class="form-control form-control-lg" placeholder="Enter email" required>
+            <div class="invalid-feedback">
+              Enter a valid email
+            </div>
+          </div>
+
+          <!-- Password with toggle -->
+          <div class="mb-4 position-relative">
+            <label class="form-label fw-semibold">Password</label>
+            <div class="input-group">
+              <input type="password" id="signupPassword" name="password" class="form-control form-control-lg" placeholder="Enter password" required minlength="6">
+              <button class="btn btn-outline-secondary" type="button" id="toggleSignupPassword" aria-label="Show password">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                  <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zm-8 4a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="invalid-feedback">
+              Password must be at least 6 characters
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button class="btn btn-danger w-100 fw-semibold btn-lg mb-3" type="submit">
+            Sign Up
+          </button>
+        </form>
+
+        <p class="text-center mt-3 mb-0">
+          Already have an account?
+          <a href="/login" class="text-danger fw-semibold text-decoration-none">
+            Login
+          </a>
+        </p>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Toggle password visibility
+  document.getElementById('toggleSignupPassword').addEventListener('click', function () {
+    const passwordInput = document.getElementById('signupPassword');
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+  });
+
+  // Validation script
+  (() => {
+    'use strict'
+    const forms = document.querySelectorAll('.needs-validation')
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+        form.classList.add('was-validated')
+      }, false)
+    })
+  })()
+</script>

@@ -1,0 +1,26 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4 mb-5" style="max-width: 800px;">
+  <h2 class="fw-bold mb-4">Messages</h2>
+
+  <% if(messages && messages.length > 0) { %>
+    <div class="d-flex flex-column gap-3">
+      <% for(let msg of messages) { %>
+        <div class="card border-0 shadow-sm rounded-4 p-4 <%= msg.isRead ? '' : 'border-start border-danger border-3' %>">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h5 class="fw-bold mb-0"><%= msg.title %></h5>
+            <span class="text-muted small"><%= msg.createdAt.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) %>, <%= msg.createdAt.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }) %></span>
+          </div>
+          <p class="text-muted mb-0" style="font-size: 15px;"><%= msg.content %></p>
+        </div>
+      <% } %>
+    </div>
+  <% } else { %>
+    <div class="text-center py-5">
+      <i class="fa-regular fa-envelope-open fs-1 text-muted mb-3 d-block"></i>
+      <h4 class="fw-semibold mt-3">No messages yet</h4>
+      <p class="text-muted">When you book a trip, your booking confirmations and updates will appear here.</p>
+      <a href="/listings" class="btn btn-outline-dark fw-bold rounded-3 py-2 px-4 mt-2">Explore listings</a>
+    </div>
+  <% } %>
+</div>
