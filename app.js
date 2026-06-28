@@ -138,6 +138,7 @@ app.use((err, req, res, next) => {
   res.render("error", { status, message });
 });
 
-app.listen(4040, () => {
-  console.log("server is listening to port : 4040");
+const PORT = process.env.PORT || 4040;
+app.listen(PORT, () => {
+  console.log(`server is listening to port : ${PORT}`);
 });
